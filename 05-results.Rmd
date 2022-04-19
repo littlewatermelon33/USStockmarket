@@ -177,12 +177,6 @@ PE_analysis_improved <- PE_analysis%>%
   filter(Earnings_Share>0&Price<400)%>%
   filter(Earnings_Share<20)%>%
   filter(Price_Earnings>0 & Price_Earnings<50)
-g9 <- ggplot(PE_analysis_improved,aes(x=Earnings_Share,y=Price,color=Sector))+
-  geom_point()+
-  labs(title="",
-       x="Earnings_Share",
-       y="Price")
-g9
 ```
 
 
