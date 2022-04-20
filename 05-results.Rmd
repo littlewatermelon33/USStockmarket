@@ -65,7 +65,7 @@ start_date <- "2017-01-06"
 Info-tech perform best. 
 
 
-### SP500 Constitutent
+## SP500 Constitutent
 
 ```{r}
 library(treemap)
@@ -105,7 +105,7 @@ SP500_sector_year2 <- SP500_sector_year%>%
   mutate(Category = as.factor(ifelse(SP500_sector_year$`2021`<0.1,"Low-weighted","High-weighted")))
 head(SP500_sector_year2)
 
-g11 <- SP500_sector_year2%>%
+g5 <- SP500_sector_year2%>%
   arrange(Category)%>%
   parcoords(rownames = F,
             brushMode ="1D-axes",
@@ -113,7 +113,7 @@ g11 <- SP500_sector_year2%>%
             queue = T,
             color=list(colorBy = "Category",colorScale="scaleOrdinal",colorScheme="schemeSet1"),
             withD3 =T)
-g11
+g5
 ```
 
 Investigate weight in different situations:
@@ -137,16 +137,16 @@ mosaic(Group~Sector, direction=c("h","v"),tidy_situation,
 ```
 
 ```{r}
-g5 <- ggplot(tidy_situation,aes(x=Group,y=Freq,fill=Sector))+
+g6 <- ggplot(tidy_situation,aes(x=Group,y=Freq,fill=Sector))+
   geom_bar(position = "fill",stat="identity")+
   theme_minimal()+
   scale_fill_manual('position',values = c('coral2', 'steelblue', 'pink',"grey80","cornflowerblue","lightblue","darkseagreen2","lightpink","hotpink","lightsteelblue","plum2"))
 
-g5
+g6
 ```
 
 
-### Specific Industry Analysis
+## Specific Industry Analysis
 
 The price-to-earnings ratio is one of the most widely used metrics for investors and analysts to determine tock valuation. 
 
@@ -160,9 +160,9 @@ PE_analysis <- SP500_comp_df%>%
 head(PE_analysis)
 ```
 ```{r}
-g8 <- ggplot(PE_analysis,aes(x=Earnings_Share,y=Price))+
+g7 <- ggplot(PE_analysis,aes(x=Earnings_Share,y=Price))+
   geom_point()
-g8
+g7
 ```
 
 ```{r}
@@ -174,12 +174,12 @@ PE_analysis_improved <- PE_analysis%>%
 
 
 ```{r}
-g10 <- plot_ly(PE_analysis_improved,x=~Earnings_Share,y=~Price,color=~Sector,text=~Name,
+g8 <- plot_ly(PE_analysis_improved,x=~Earnings_Share,y=~Price,color=~Sector,text=~Name,
               market = list(size=7))%>%
   layout(title="",
          xaxis = list(title="Earnings_Share"),
          yaxis = list(title="Price"))
-g10
+g8
 ```
 
 
@@ -208,7 +208,7 @@ example2 <- Relative_Return%>%
 #                                         ifelse(example2$Relative_Return>=1 & #example2$Relative_Return<=2,"Recommend","Highly Recommend"))))
 
 head(example2)
-g6 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
+g9 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
   geom_point()+
   geom_abline(slope=2,intercept = 0,linetype=4)+
   geom_abline(slope=1,intercept = 0,linetype=4)+
@@ -217,10 +217,10 @@ g6 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
   labs(title = "",
        x="Return of SP500 Index",
        y="Return of Sector Index")
-g6
+g9
 ```
 
-### IT Industry Specific Analysis
+## IT Industry Specific Analysis
 
 Pick up IT Companies
 
@@ -303,10 +303,10 @@ cor_IT <- round(cor(IT_top4_company_return[,2:5]),2)
 head(cor_IT)
 
 melted_cor_IT <- melt(cor_IT)
-g12 <- ggplot(data=melted_cor_IT,aes(x=X1,y=X2,fill=value))+
+g10 <- ggplot(data=melted_cor_IT,aes(x=X1,y=X2,fill=value))+
   geom_tile()+
   geom_text(aes(X1,X2,label=value),
             color="white",size=6)
 
-g12
+g10
 ```
