@@ -3,7 +3,7 @@
 
 ## Import Data
 
-1) Index Price/Volulme/Return:
+1) SP500 & Sector Index
 
 ```{r}
 library(tidyverse)
@@ -24,26 +24,23 @@ Materials <- readxl::read_excel(path=data_path,sheet=11)
 Real_Estate <- readxl::read_excel(path=data_path,sheet=12)
 ```
 
-Pick several datasets to take a brief look at:
+Pick a dataset to take a brief look at:
 
 ```{r}
 head(SP500)
-head(Energy)
-head(Real_Estate)
 ```
-
 2) S&P500 Constituents Financials:
 
 ```{r}
 SP500_comp <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/constituents_financials.csv")
 SP500_sector <- readxl::read_xlsx("C:/Users/weili/Desktop/G5293/Final Project/500-sector-representation.xlsx",skip=3)
+head(SP500_comp)
 head(SP500_sector)
-print(colnames(SP500_sector))
 ```
 
-## Index Price/Volulme/Return:
+## Data Transformation:
 
-### 1) Rename column names
+### Rename column names
 
 Rename colnames to help distinguish
 
@@ -62,7 +59,25 @@ colnames(Real_Estate) <- c("Date","P_RealEstate","V_RealEstate","R_RealEstate")
 colnames(Utility) <- c("Date","P_Utility","V_Utility","R_Utility")
 ```
 
-### 2) Merge into one dataset 
+
+```{r}
+SP500_sector <- SP500_sector%>%
+  dplyr::rename("Sector"="MARKET REPRESENTATION",
+         "election_1"="election...6",
+         "election_2"="election...9")%>%
+  head(-2)
+colnames(SP500_sector) <- gsub(" ","_",colnames(SP500_sector))
+
+SP500_sector <- SP500_sector[SP500_sector$Sector !="S&P 500",]
+
+
+colnames(SP500_comp) <- gsub("[.]","_",colnames(SP500_comp))
+```
+
+
+
+
+##  Merge into one dataset 
 
 ```{r}
 USStock <- SP500%>%
@@ -80,7 +95,7 @@ USStock <- SP500%>%
 ```
 
 
-### 3) Seperate Price and Volume Data
+## Seperate Price and Volume Data
 
 ```{r}
 USStock_Price <- USStock%>%
@@ -91,26 +106,3 @@ USStock_Return <- USStock%>%
   select(Date,starts_with("R_"))
 ```
 
-
-## S&P500 Constituents Financials:
-
-```{r}
-head(SP500_comp)
-head(SP500_sector)
-```
-
-Rename column 
-
-```{r}
-SP500_sector <- SP500_sector%>%
-  rename("Sector"="MARKET REPRESENTATION",
-         "election_1"="election...6",
-         "election_2"="election...9")%>%
-  head(-2)
-colnames(SP500_sector) <- gsub(" ","_",colnames(SP500_sector))
-
-SP500_sector <- SP500_sector[SP500_sector$Sector !="S&P 500",]
-
-
-colnames(SP500_comp) <- gsub("[.]","_",colnames(SP500_comp))
-```

@@ -237,25 +237,31 @@ The top4 Companies are Apple/GooGle/MSFT/FB
 
 
 ```{r}
-APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")%>%
+APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")
+Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")
+MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")
+Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")
+APPLE <- APPLE%>%
   select(Date,Close)%>%
-  rename(Apple_close=Close)%>%
-  mutate(Apple_return = c(-diff(APPLE$Apple_close)/APPLE$Apple_close[-1] *  100, NA))
+  rename(APPLE_close=Close)%>%
+  mutate(Apple_return = c(-diff(APPLE$Close)/APPLE$Close[-1]*100,NA))
 
-Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")%>%
-  select(Date,Close)%>%
-  rename(Google_close=Close)%>%
-  mutate(Google_return = c(-diff(Google$Google_close)/Google$Google_close[-1] *  100, NA))
 
-MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")%>%
+Google <- Google%>%
   select(Date,Close)%>%
-  rename(MSFT_close=Close)%>%
-  mutate(MSFT_return = c(-diff(MSFT$MSFT_close)/MSFT$MSFT_close[-1] *  100, NA))
+  mutate(Google_return = c(-diff(Google$Close)/Google$Close[-1] *  100, NA))
+colnames(Google) <- c("Date","Google_close","Google_return")
 
-Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")%>%
+
+MSFT <- MSFT%>%
   select(Date,Close)%>%
-  rename(FB_close=Close)%>%
-  mutate(FB_return = c(-diff(Facebook$FB_close)/Facebook$FB_close[-1] *  100, NA)) 
+  mutate(MSFT_return = c(-diff(MSFT$Close)/MSFT$Close[-1] *  100, NA))
+colnames(MSFT) <- c("Date","MSFT_close","MSFT_return")
+
+Facebook <- Facebook%>%
+  select(Date,Close)%>%
+  mutate(FB_return = c(-diff(Facebook$Close)/Facebook$Close[-1] *  100, NA)) 
+colnames(Facebook) <- c("Date","FB_close","FB_return")
 ```
 
 ```{r}

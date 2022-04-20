@@ -32,7 +32,7 @@ image(x2)
 
 
 
-```{r}
+```{r,fig.width=10}
 library(tibble)
 sum(is.na.data.frame(SP500_sector))
 
