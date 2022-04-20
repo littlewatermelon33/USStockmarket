@@ -1,6 +1,10 @@
 # Results
 
+## US Whole Stock Market
+
 Start to explore
+
+5-year weekly return :
 
 ```{r}
 library(tidyverse)
@@ -64,10 +68,6 @@ Info-tech perform best.
 ### SP500 Constitutent
 
 ```{r}
-head(SP500_comp)
-```
-
-```{r}
 library(treemap)
 head(SP500_sector)
 
@@ -98,21 +98,25 @@ SP500_sector_year <- SP500_sector%>%
 ```
 We separate the sector into 2 Categories, one is "High-weighted", which proportion is over 10%, another is "Low-weighted"
 
+Plot the interactive plot to see the change of weight in different sector. 
 
 ```{r}
 SP500_sector_year2 <- SP500_sector_year%>%
-  mutate(Category = as.factor(ifelse(SP500_sector_year$`2021`>=0.1,"High-weighted","Low-weighted")))
+  mutate(Category = as.factor(ifelse(SP500_sector_year$`2021`<0.1,"Low-weighted","High-weighted")))
 head(SP500_sector_year2)
 
-g11 <- parcoords(SP500_sector_year2,
-                rownames = F,
-                brushMode ="1D-axes",
-                reorderable = T,
-                queue = T,
-                color=list(colorBy = "Category",colorScale="scaleOrdinal",colorScheme="schemeSet1"),
-                withD3 =T)
+g11 <- SP500_sector_year2%>%
+  arrange(Category)%>%
+  parcoords(rownames = F,
+            brushMode ="1D-axes",
+            reorderable = T,
+            queue = T,
+            color=list(colorBy = "Category",colorScale="scaleOrdinal",colorScheme="schemeSet1"),
+            withD3 =T)
 g11
 ```
+
+Investigate weight in different situations:
 
 ```{r,echo=FALSE,fig.width = 10}
 library(vcd)
@@ -143,17 +147,6 @@ g5
 
 
 ### Specific Industry Analysis
-
-Pick up IT Companies
-
-```{r}
-IT_company <- SP500_comp_df%>%
-  filter(Sector=="Information Technology")%>%
-  arrange(desc(Market_Cap))
-#Company correlation
-head(SP500_comp_df)
-head(IT_company)
-```
 
 The price-to-earnings ratio is one of the most widely used metrics for investors and analysts to determine tock valuation. 
 
@@ -187,7 +180,6 @@ g10 <- plot_ly(PE_analysis_improved,x=~Earnings_Share,y=~Price,color=~Sector,tex
          xaxis = list(title="Earnings_Share"),
          yaxis = list(title="Price"))
 g10
-
 ```
 
 
@@ -211,9 +203,9 @@ Relative_Return <- USStock_Return%>%
 example2 <- Relative_Return%>%
   select(Date,R_SP500,R_Infotech,R_Health,R_ConsumerD,R_Fin)%>%
   pivot_longer(cols=c("R_Infotech","R_Health","R_ConsumerD","R_Fin"),names_to = "Type",values_to = "Return")%>%
-  mutate(Relative_Return = Return/R_SP500)%>%
-  mutate(Evaluation = as.factor(ifelse(example2$Relative_Return<1,"Not Recommend",
-                                         ifelse(example2$Relative_Return>=1 & example2$Relative_Return<=2,"Recommend","Highly Recommend"))))
+  mutate(Relative_Return = Return/R_SP500)
+#  mutate(Evaluation = as.factor(ifelse(example2$Relative_Return<1,"Not Recommend",
+#                                         ifelse(example2$Relative_Return>=1 & #example2$Relative_Return<=2,"Recommend","Highly Recommend"))))
 
 head(example2)
 g6 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
@@ -228,4 +220,87 @@ g6 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
 g6
 ```
 
- 
+### IT Industry Specific Analysis
+
+Pick up IT Companies
+
+```{r}
+IT_company <- SP500_comp_df%>%
+  filter(Sector=="Information Technology")%>%
+  arrange(desc(Market_Cap))
+#Company correlation
+head(SP500_comp_df)
+head(IT_company,11)
+```
+
+The top4 Companies are Apple/GooGle/MSFT/FB
+
+
+```{r}
+APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")%>%
+  select(Date,Close)%>%
+  rename(Apple_close=Close)%>%
+  mutate(Apple_return = c(-diff(APPLE$Apple_close)/APPLE$Apple_close[-1] *  100, NA))
+
+Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")%>%
+  select(Date,Close)%>%
+  rename(Google_close=Close)%>%
+  mutate(Google_return = c(-diff(Google$Google_close)/Google$Google_close[-1] *  100, NA))
+
+MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")%>%
+  select(Date,Close)%>%
+  rename(MSFT_close=Close)%>%
+  mutate(MSFT_return = c(-diff(MSFT$MSFT_close)/MSFT$MSFT_close[-1] *  100, NA))
+
+Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")%>%
+  select(Date,Close)%>%
+  rename(FB_close=Close)%>%
+  mutate(FB_return = c(-diff(Facebook$FB_close)/Facebook$FB_close[-1] *  100, NA)) 
+```
+
+```{r}
+IT_top4_company <- APPLE%>%
+  left_join(Google,by="Date")%>%
+  left_join(MSFT,by="Date")%>%
+  left_join(Facebook,by="Date")
+IT_top4_company_return <- IT_top4_company%>%
+  select(Date,ends_with("_return"))%>%
+  drop_na() #Drop the last row which has no return 
+```
+
+
+```{r}
+panel.hist <- function(x, ...) {
+    usr <- par("usr")
+    on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5))
+    his <- hist(x, plot = FALSE,breaks=20)
+    breaks <- his$breaks
+    nB <- length(breaks)
+    y <- his$counts
+    y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = rgb(0, 1, 1, alpha = 0.5), ...)
+    # lines(density(x), col = 2, lwd = 2) # Uncomment to add density lines
+}
+pairs(~Apple_return+Google_return+MSFT_return+FB_return,
+      data=IT_top4_company_return,
+      labels=c("Apple","Google","Microsoft","Facebook"),
+      main="Tech Stocks",
+      diag.panel = panel.hist)
+```
+
+
+
+```{r}
+library(reshape)
+cor_IT <- round(cor(IT_top4_company_return[,2:5]),2)
+head(cor_IT)
+
+melted_cor_IT <- melt(cor_IT)
+g12 <- ggplot(data=melted_cor_IT,aes(x=X1,y=X2,fill=value))+
+  geom_tile()+
+  geom_text(aes(X1,X2,label=value),
+            color="white",size=6)
+
+g12
+```
