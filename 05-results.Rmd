@@ -31,14 +31,17 @@ g1
 ```{r}
 g2 <- ggplot(Return_df,aes(Return))+
   geom_histogram(color = "blue", fill = "lightblue")+
-  facet_wrap(~Sector,scales = "free_x")
+  facet_wrap(~Sector,scales = "free_x")+
+  labs(title="Histogram of Sector Index Performance",
+       x="Return",
+       y="Frequency")
 g2
 ```
 
 ```{r}
 g3 <- ggplot(Return_df,aes(Return,Sector))+
   geom_boxplot()+
-  labs(title="",
+  labs(title="Biplot of Sector Index Performance",
        x="Return (%)")+
   theme_grey(12)
 g3
@@ -48,18 +51,10 @@ g3
 library(ggridges)
 g4 <- ggplot(Return_df,aes(x=Return,y=reorder(Sector,-Return,median)))+
   geom_density_ridges(fill="blue",alpha=0.5)+
-  labs(title="",
+  labs(title="clevend dot plots of Sector Index Performance",
        y="Sector",
        x="Return (%)")
 g4
-```
-
-
-```{r}
-head(USStock_Price)
-tail(USStock_Price)
-
-start_date <- "2017-01-06"
 ```
 
 Info-tech perform best. 
@@ -75,8 +70,6 @@ head(SP500_sector)
 treemap(SP500_sector,index="Sector",vSize="2021",title = "SP500 Constituent in 2021")
 ```
 ```{r}
-
-
 SP500_sector_year <- SP500_sector%>%
   select(c("Sector","1989","1999","2009","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
 #%>%
@@ -96,6 +89,7 @@ SP500_sector_year <- SP500_sector%>%
 #  theme_classic()
 #al_plot
 ```
+
 We separate the sector into 2 Categories, one is "High-weighted", which proportion is over 10%, another is "Low-weighted"
 
 Plot the interactive plot to see the change of weight in different sector. 
@@ -140,13 +134,16 @@ mosaic(Group~Sector, direction=c("h","v"),tidy_situation,
 g6 <- ggplot(tidy_situation,aes(x=Group,y=Freq,fill=Sector))+
   geom_bar(position = "fill",stat="identity")+
   theme_minimal()+
-  scale_fill_manual('position',values = c('coral2', 'steelblue', 'pink',"grey80","cornflowerblue","lightblue","darkseagreen2","lightpink","hotpink","lightsteelblue","plum2"))
+  scale_fill_manual('position',values = c('coral2', 'steelblue', 'pink',"grey80","cornflowerblue","lightblue","darkseagreen2","lightpink","hotpink","lightsteelblue","plum2"))+
+  labs(title="Sector Composition Change in different periods",
+       x="Period",
+       y="Proportion")
 
 g6
 ```
 
 
-## Specific Industry Analysis
+## PE-ratio Selection
 
 The price-to-earnings ratio is one of the most widely used metrics for investors and analysts to determine tock valuation. 
 
@@ -161,7 +158,10 @@ head(PE_analysis)
 ```
 ```{r}
 g7 <- ggplot(PE_analysis,aes(x=Earnings_Share,y=Price))+
-  geom_point()
+  geom_point()+
+  labs(title="First Glance of SP500 company P/E Ratio",
+       x="Earnings per share",
+       y="Price")
 g7
 ```
 
@@ -177,7 +177,7 @@ PE_analysis_improved <- PE_analysis%>%
 g8 <- plot_ly(PE_analysis_improved,x=~Earnings_Share,y=~Price,color=~Sector,text=~Name,
               market = list(size=7))%>%
   layout(title="",
-         xaxis = list(title="Earnings_Share"),
+         xaxis = list(title="Earnings per Share"),
          yaxis = list(title="Price"))
 g8
 ```
@@ -243,7 +243,7 @@ MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")
 Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")
 APPLE <- APPLE%>%
   select(Date,Close)%>%
-  rename(APPLE_close=Close)%>%
+  dplyr::rename(APPLE_close=Close)%>%
   mutate(Apple_return = c(-diff(APPLE$Close)/APPLE$Close[-1]*100,NA))
 
 
@@ -291,7 +291,7 @@ panel.hist <- function(x, ...) {
 pairs(~Apple_return+Google_return+MSFT_return+FB_return,
       data=IT_top4_company_return,
       labels=c("Apple","Google","Microsoft","Facebook"),
-      main="Tech Stocks",
+      main="Correlation matrix of Top 4 Tech Stocks",
       diag.panel = panel.hist)
 ```
 

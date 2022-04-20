@@ -67,17 +67,16 @@ SP500_sector <- SP500_sector%>%
          "election_2"="election...9")%>%
   head(-2)
 colnames(SP500_sector) <- gsub(" ","_",colnames(SP500_sector))
-
 SP500_sector <- SP500_sector[SP500_sector$Sector !="S&P 500",]
-
-
 colnames(SP500_comp) <- gsub("[.]","_",colnames(SP500_comp))
+
+print(colnames(SP500_sector))
+
+print(colnames(SP500_comp))
 ```
 
 
-
-
-##  Merge into one dataset 
+###  Merge into one dataset 
 
 ```{r}
 USStock <- SP500%>%
@@ -92,10 +91,11 @@ USStock <- SP500%>%
   left_join(Materials,by="Date")%>%
   left_join(Real_Estate,by="Date")%>%
   left_join(Utility,by="Date")
+head(USStock)
 ```
 
 
-## Seperate Price and Volume Data
+### Seperate Price and Volume Data
 
 ```{r}
 USStock_Price <- USStock%>%
@@ -104,5 +104,11 @@ USStock_Volume <- USStock%>%
   select(Date,starts_with("V_"))
 USStock_Return <- USStock%>%
   select(Date,starts_with("R_"))
+
+head(USStock_Price)
+
+head(USStock_Volume)
+
+head(USStock_Return)
 ```
 

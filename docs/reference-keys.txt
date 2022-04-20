@@ -2,11 +2,10 @@ introduction
 data-sources
 data-transformation
 import-data
-index-pricevolulmereturn
+data-transformation-1
 rename-column-names
 merge-into-one-dataset
 seperate-price-and-volume-data
-sp500-constituents-financials
 missing-values
 us-stock
 sp500-constitutent
