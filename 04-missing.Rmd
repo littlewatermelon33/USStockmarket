@@ -15,7 +15,7 @@ x1 <- missing_data.frame(stock_df)
 image(x1)
 ```
 
-There is no missing value in 'USStock market data', no need to process.
+The first graph shows the missing data in the “Final_Project” dataset that tells the whole performance of the US Stock market. As we could see that there are no missing values shown in this data set. Therefore, there is no further processing that we need to make. 
 
 ## SP500 Constitutent
 
@@ -30,6 +30,7 @@ x2 <- missing_data.frame(SP500_comp_df)
 image(x2)
 ```
 
+The second graph shows the information on the missing value of the data set “constituents_financials ”. There are 10 values missing in it. Specifically, there are 2 values missing from Price_Earnings, and there are 8 values missing from Price_Book.
 
 
 ```{r,fig.width=10}
@@ -51,5 +52,4 @@ ggplot(tidysector, aes(x = key, y = fct_rev(id), fill = missing)) +
   geom_tile(color = "white") 
 ```
 
-
-Missing Values only appears in 'Real Estate' Sector
+The third graph shows the information on “500-sector-representation”.  We could directly see from the graph that the green ones represent the missing values from that part. Therefore, all missing values are within the “Real Estate” sector. There are 12 in total missing values.  Specifically, the values “bear_low”, “bull_high”,”prior_bear_low”, “prior_bull_high” and the year 1989, 1999,2009, 2011,2012,2013,2014 and 2015’s values are missing as well. There are no values missing from other sectors and other columns. 

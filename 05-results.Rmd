@@ -233,36 +233,7 @@ head(SP500_comp_df)
 head(IT_company,11)
 ```
 
-The top4 Companies are Apple/GooGle/MSFT/FB
-
-
-```{r}
-APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")
-Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")
-MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")
-Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")
-APPLE <- APPLE%>%
-  select(Date,Close)%>%
-  dplyr::rename(APPLE_close=Close)%>%
-  mutate(Apple_return = c(-diff(APPLE$Close)/APPLE$Close[-1]*100,NA))
-
-
-Google <- Google%>%
-  select(Date,Close)%>%
-  mutate(Google_return = c(-diff(Google$Close)/Google$Close[-1] *  100, NA))
-colnames(Google) <- c("Date","Google_close","Google_return")
-
-
-MSFT <- MSFT%>%
-  select(Date,Close)%>%
-  mutate(MSFT_return = c(-diff(MSFT$Close)/MSFT$Close[-1] *  100, NA))
-colnames(MSFT) <- c("Date","MSFT_close","MSFT_return")
-
-Facebook <- Facebook%>%
-  select(Date,Close)%>%
-  mutate(FB_return = c(-diff(Facebook$Close)/Facebook$Close[-1] *  100, NA)) 
-colnames(Facebook) <- c("Date","FB_close","FB_return")
-```
+The top4 Companies are Apple/GooGle/MSFT/FB, we have imported the needed data in the previous section.
 
 ```{r}
 IT_top4_company <- APPLE%>%

@@ -1,6 +1,5 @@
 # Data transformation
 
-
 ## Import Data
 
 1) SP500 & Sector Index
@@ -29,6 +28,7 @@ Pick a dataset to take a brief look at:
 ```{r}
 head(SP500)
 ```
+
 2) S&P500 Constituents Financials:
 
 ```{r}
@@ -42,7 +42,7 @@ head(SP500_sector)
 
 ### Rename column names
 
-Rename colnames to help distinguish
+First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns. For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. And same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors. 
 
 ```{r}
 colnames(SP500) <- c("Date","P_SP500","V_SP500","R_SP500")
@@ -111,4 +111,39 @@ head(USStock_Volume)
 
 head(USStock_Return)
 ```
+
+
+Moreover, we have one small add-ons of the data. Although it is not data transformation on the original ones that we directly get from the website. We indeed make some changes. We add one more column for calculating the returns by using the formula: (Pi/P1/6/17)-1 where i is the date price.
+
+
+```{r}
+APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")
+Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")
+MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")
+Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")
+APPLE <- APPLE%>%
+  select(Date,Close)%>%
+  dplyr::rename(APPLE_close=Close)%>%
+  mutate(Apple_return = c(-diff(APPLE$Close)/APPLE$Close[-1]*100,NA))
+
+
+Google <- Google%>%
+  select(Date,Close)%>%
+  mutate(Google_return = c(-diff(Google$Close)/Google$Close[-1] *  100, NA))
+colnames(Google) <- c("Date","Google_close","Google_return")
+
+
+MSFT <- MSFT%>%
+  select(Date,Close)%>%
+  mutate(MSFT_return = c(-diff(MSFT$Close)/MSFT$Close[-1] *  100, NA))
+colnames(MSFT) <- c("Date","MSFT_close","MSFT_return")
+
+Facebook <- Facebook%>%
+  select(Date,Close)%>%
+  mutate(FB_return = c(-diff(Facebook$Close)/Facebook$Close[-1] *  100, NA)) 
+colnames(Facebook) <- c("Date","FB_close","FB_return")
+```
+
+
+Other than what I mentioned above, that’s all the changes we made on the original data. There are no further transformations on the data. 
 

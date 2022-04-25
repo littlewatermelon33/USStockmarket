@@ -90,9 +90,9 @@
 <li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#data-transformation-1"><i class="fa fa-check"></i><b>3.2</b> Data Transformation:<span></span></a>
 <ul>
 <li class="chapter" data-level="3.2.1" data-path="data-transformation.html"><a href="data-transformation.html#rename-column-names"><i class="fa fa-check"></i><b>3.2.1</b> Rename column names<span></span></a></li>
+<li class="chapter" data-level="3.2.2" data-path="data-transformation.html"><a href="data-transformation.html#merge-into-one-dataset"><i class="fa fa-check"></i><b>3.2.2</b> Merge into one dataset<span></span></a></li>
+<li class="chapter" data-level="3.2.3" data-path="data-transformation.html"><a href="data-transformation.html#seperate-price-and-volume-data"><i class="fa fa-check"></i><b>3.2.3</b> Seperate Price and Volume Data<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#merge-into-one-dataset"><i class="fa fa-check"></i><b>3.3</b> Merge into one dataset<span></span></a></li>
-<li class="chapter" data-level="3.4" data-path="data-transformation.html"><a href="data-transformation.html#seperate-price-and-volume-data"><i class="fa fa-check"></i><b>3.4</b> Seperate Price and Volume Data<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values<span></span></a>
 <ul>
@@ -103,7 +103,7 @@
 <ul>
 <li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#us-whole-stock-market"><i class="fa fa-check"></i><b>5.1</b> US Whole Stock Market<span></span></a></li>
 <li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#sp500-constitutent-1"><i class="fa fa-check"></i><b>5.2</b> SP500 Constitutent<span></span></a></li>
-<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#specific-industry-analysis"><i class="fa fa-check"></i><b>5.3</b> Specific Industry Analysis<span></span></a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#pe-ratio-selection"><i class="fa fa-check"></i><b>5.3</b> PE-ratio Selection<span></span></a></li>
 <li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#it-industry-specific-analysis"><i class="fa fa-check"></i><b>5.4</b> IT Industry Specific Analysis<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component<span></span></a></li>
@@ -199,14 +199,74 @@
 <div id="rename-column-names" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Rename column names<a href="data-transformation.html#rename-column-names" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Rename colnames to help distinguish</p>
+<pre><code>##  [1] &quot;Sector&quot;          &quot;2021&quot;            &quot;2020&quot;            &quot;2021_CHANGE&quot;    
+##  [5] &quot;high&quot;            &quot;election_1&quot;      &quot;covid_low&quot;       &quot;pre-covid_hi&quot;   
+##  [9] &quot;election_2&quot;      &quot;bear_low&quot;        &quot;bull_high&quot;       &quot;prior_bear_low&quot; 
+## [13] &quot;prior_bull_high&quot; &quot;2019&quot;            &quot;2018&quot;            &quot;2017&quot;           
+## [17] &quot;2016&quot;            &quot;2015&quot;            &quot;2014&quot;            &quot;2013&quot;           
+## [21] &quot;2012&quot;            &quot;2011&quot;            &quot;2009&quot;            &quot;1999&quot;           
+## [25] &quot;1989&quot;</code></pre>
+<pre><code>##  [1] &quot;Symbol&quot;         &quot;Name&quot;           &quot;Sector&quot;         &quot;Price&quot;         
+##  [5] &quot;Price_Earnings&quot; &quot;Dividend_Yield&quot; &quot;Earnings_Share&quot; &quot;X52_Week_Low&quot;  
+##  [9] &quot;X52_Week_High&quot;  &quot;Market_Cap&quot;     &quot;EBITDA&quot;         &quot;Price_Sales&quot;   
+## [13] &quot;Price_Book&quot;     &quot;SEC_Filings&quot;</code></pre>
 </div>
+<div id="merge-into-one-dataset" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Merge into one dataset<a href="data-transformation.html#merge-into-one-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<pre><code>## # A tibble: 6 x 37
+##   Date                P_SP500    V_SP500 R_SP500 P_CommuSer V_CommuSer R_CommuSer
+##   &lt;dttm&gt;                &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+## 1 2021-12-31 00:00:00   4766. 1871893220   1.09        267.  201746084      0.532
+## 2 2021-12-24 00:00:00   4726. 2191128627   1.08        270.  218743361      0.544
+## 3 2021-12-17 00:00:00   4621. 4954862556   1.03        263.  540307245      0.506
+## 4 2021-12-10 00:00:00   4712. 3004269454   1.07        266.  324612410      0.525
+## 5 2021-12-03 00:00:00   4538. 4438623886   0.993       259.  467692149      0.482
+## 6 2021-11-26 00:00:00   4595. 2248016670   1.02        266.  210905394      0.524
+## # ... with 30 more variables: P_ConsumerD &lt;dbl&gt;, V_ConsumerD &lt;dbl&gt;,
+## #   R_ConsumerD &lt;dbl&gt;, P_ConsumerS &lt;dbl&gt;, V_ConsumerS &lt;dbl&gt;, R_ConsumerS &lt;dbl&gt;,
+## #   P_Energy &lt;dbl&gt;, V_Energy &lt;dbl&gt;, R_Energy &lt;dbl&gt;, P_Fin &lt;dbl&gt;, V_Fin &lt;dbl&gt;,
+## #   R_Fin &lt;dbl&gt;, P_Health &lt;dbl&gt;, V_Health &lt;dbl&gt;, R_Health &lt;dbl&gt;,
+## #   P_Industrial &lt;dbl&gt;, V_Industrial &lt;dbl&gt;, R_Industrial &lt;dbl&gt;,
+## #   P_Infotech &lt;dbl&gt;, V_Infotech &lt;dbl&gt;, R_Infotech &lt;dbl&gt;, P_Materials &lt;dbl&gt;,
+## #   V_Materials &lt;dbl&gt;, R_Materials &lt;dbl&gt;, P_RealEstate &lt;dbl&gt;, ...</code></pre>
 </div>
-<div id="merge-into-one-dataset" class="section level2 hasAnchor" number="3.3">
-<h2><span class="header-section-number">3.3</span> Merge into one dataset<a href="data-transformation.html#merge-into-one-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="seperate-price-and-volume-data" class="section level2 hasAnchor" number="3.4">
-<h2><span class="header-section-number">3.4</span> Seperate Price and Volume Data<a href="data-transformation.html#seperate-price-and-volume-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="seperate-price-and-volume-data" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Seperate Price and Volume Data<a href="data-transformation.html#seperate-price-and-volume-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<pre><code>## # A tibble: 6 x 13
+##   Date                P_SP500 P_CommuSer P_ConsumerD P_ConsumerS P_Energy P_Fin
+##   &lt;dttm&gt;                &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 2021-12-31 00:00:00   4766.       267.       1611.        805.     423.  650.
+## 2 2021-12-24 00:00:00   4726.       270.       1604.        785.     418.  646.
+## 3 2021-12-17 00:00:00   4621.       263.       1545.        780.     409.  639.
+## 4 2021-12-10 00:00:00   4712.       266.       1614.        771.     431.  648.
+## 5 2021-12-03 00:00:00   4538.       259.       1575.        745.     415.  631.
+## 6 2021-11-26 00:00:00   4595.       266.       1613.        748.     419.  644.
+## # ... with 6 more variables: P_Health &lt;dbl&gt;, P_Industrial &lt;dbl&gt;,
+## #   P_Infotech &lt;dbl&gt;, P_Materials &lt;dbl&gt;, P_RealEstate &lt;dbl&gt;, P_Utility &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 x 13
+##   Date                V_SP500 V_CommuSer V_ConsumerD V_ConsumerS V_Energy  V_Fin
+##   &lt;dttm&gt;                &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+## 1 2021-12-31 00:00:00  1.87e9  201746084   235410161   121522191   1.32e8 2.06e8
+## 2 2021-12-24 00:00:00  2.19e9  218743361   265524409   147001217   1.66e8 2.68e8
+## 3 2021-12-17 00:00:00  4.95e9  540307245   557366831   359064442   3.59e8 6.44e8
+## 4 2021-12-10 00:00:00  3.00e9  324612410   356340119   201653031   2.01e8 3.44e8
+## 5 2021-12-03 00:00:00  4.44e9  467692149   505253793   293469274   3.74e8 5.37e8
+## 6 2021-11-26 00:00:00  2.25e9  210905394   286769129   140448143   1.74e8 2.72e8
+## # ... with 6 more variables: V_Health &lt;dbl&gt;, V_Industrial &lt;dbl&gt;,
+## #   V_Infotech &lt;dbl&gt;, V_Materials &lt;dbl&gt;, V_RealEstate &lt;dbl&gt;, V_Utility &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 x 13
+##   Date                R_SP500 R_CommuSer R_ConsumerD R_ConsumerS R_Energy R_Fin
+##   &lt;dttm&gt;                &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1 2021-12-31 00:00:00   1.09       0.532        1.43       0.503   -0.242 0.662
+## 2 2021-12-24 00:00:00   1.08       0.544        1.42       0.467   -0.250 0.653
+## 3 2021-12-17 00:00:00   1.03       0.506        1.33       0.457   -0.267 0.635
+## 4 2021-12-10 00:00:00   1.07       0.525        1.44       0.441   -0.228 0.656
+## 5 2021-12-03 00:00:00   0.993      0.482        1.38       0.392   -0.255 0.614
+## 6 2021-11-26 00:00:00   1.02       0.524        1.43       0.398   -0.249 0.646
+## # ... with 6 more variables: R_Health &lt;dbl&gt;, R_Industrial &lt;dbl&gt;,
+## #   R_Infotech &lt;dbl&gt;, R_Materials &lt;dbl&gt;, R_RealEstate &lt;dbl&gt;, R_Utility &lt;dbl&gt;</code></pre>
 
+</div>
 </div>
 </div>
             </section>
