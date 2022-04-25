@@ -23,7 +23,7 @@
 <meta name="author" content="Weilin Zhou &amp; Xiaoyuan Ge" />
 
 
-<meta name="date" content="2022-04-20" />
+<meta name="date" content="2022-04-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -198,7 +198,7 @@
 <h2><span class="header-section-number">3.2</span> Data Transformation:<a href="data-transformation.html#data-transformation-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="rename-column-names" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Rename column names<a href="data-transformation.html#rename-column-names" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Rename colnames to help distinguish</p>
+<p>First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns. For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. And same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors.</p>
 <pre><code>##  [1] &quot;Sector&quot;          &quot;2021&quot;            &quot;2020&quot;            &quot;2021_CHANGE&quot;    
 ##  [5] &quot;high&quot;            &quot;election_1&quot;      &quot;covid_low&quot;       &quot;pre-covid_hi&quot;   
 ##  [9] &quot;election_2&quot;      &quot;bear_low&quot;        &quot;bull_high&quot;       &quot;prior_bear_low&quot; 
@@ -265,6 +265,8 @@
 ## 6 2021-11-26 00:00:00   1.02       0.524        1.43       0.398   -0.249 0.646
 ## # ... with 6 more variables: R_Health &lt;dbl&gt;, R_Industrial &lt;dbl&gt;,
 ## #   R_Infotech &lt;dbl&gt;, R_Materials &lt;dbl&gt;, R_RealEstate &lt;dbl&gt;, R_Utility &lt;dbl&gt;</code></pre>
+<p>Moreover, we have one small add-ons of the data. Although it is not data transformation on the original ones that we directly get from the website. We indeed make some changes. We add one more column for calculating the returns by using the formula: (Pi/P1/6/17)-1 where i is the date price.</p>
+<p>Other than what I mentioned above, that’s all the changes we made on the original data. There are no further transformations on the data.</p>
 
 </div>
 </div>

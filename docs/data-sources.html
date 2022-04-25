@@ -23,7 +23,7 @@
 <meta name="author" content="Weilin Zhou &amp; Xiaoyuan Ge" />
 
 
-<meta name="date" content="2022-04-20" />
+<meta name="date" content="2022-04-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -129,6 +129,11 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources<a href="data-sources.html#data-sources" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Weilin is responsible for collecting the data. First of all, we discussed that the data could be directly fetched from yahoo finance but it seems hard to use the numbers straightforwardly . And, Weilin found that there are datasets that could be directly downloaded from Data Hub and Bloomberg.</p>
+<p>First of all, we collected the data information about S&amp;P 500 from the “Data Hub”, finding the companies within the S&amp;P 500 selection included and what sectors they belong to(Among all 11 different sectors).The name of the data set is called “constituents_financials” . In more detail, the data set included the information about their names, short-cuts, sectors,prices, EPS, dividend yield, 52 week low and high, market cap, EBITDA and etc. In total, there are 14 different variables inside, and some of them are numbers and some are strings. When going deeper into the dataset, the data of S&amp;P500 Companies with financial information in total have 505 rows which represent there are 505 companies inside the calculation of index S&amp;P 500.</p>
+<p>Secondly, we pulled in the data from Bloomberg on the price every 2 weeks of stocks from each 11 sectors and also the index price change of S&amp;P 500. After obtaining the data, we add-in one column to calculate the returns. Calculating returns could better help us conduct more research later thus this step is necessary. The type of variables in the “USStock market data” including date, price, volume and one add-in : returns. Price, Volume and Returns are all numbers and date is the only string variable.</p>
+<p>There are no problems that we observe from USStock market data. But we indeed found that there are some missing values in SP500 constituent data. There are 10 data points missing from the ‘Real Estate’ Sector. Besides this, there are no irregularities and extreme outliers observed in the data set that we use. I think one reason behind this would be because the website we fetched the data from, they have already done some data processing. And another reason I regard is because the unit of financial data metrics that we use is weeks, in comparison to second to second, or minute to minute, it is easier to record.</p>
+<p>Here are links for our data sources:</p>
 <ol style="list-style-type: decimal">
 <li>Database: Bloomberg</li>
 </ol>
