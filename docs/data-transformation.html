@@ -23,7 +23,7 @@
 <meta name="author" content="Weilin Zhou &amp; Xiaoyuan Ge" />
 
 
-<meta name="date" content="2022-04-25" />
+<meta name="date" content="2022-05-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -198,7 +198,11 @@
 <h2><span class="header-section-number">3.2</span> Data Transformation:<a href="data-transformation.html#data-transformation-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="rename-column-names" class="section level3 hasAnchor" number="3.2.1">
 <h3><span class="header-section-number">3.2.1</span> Rename column names<a href="data-transformation.html#rename-column-names" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns. For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. And same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors.</p>
+<p>First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns:</p>
+<ul>
+<li>For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set.</li>
+<li>Same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors.</li>
+</ul>
 <pre><code>##  [1] &quot;Sector&quot;          &quot;2021&quot;            &quot;2020&quot;            &quot;2021_CHANGE&quot;    
 ##  [5] &quot;high&quot;            &quot;election_1&quot;      &quot;covid_low&quot;       &quot;pre-covid_hi&quot;   
 ##  [9] &quot;election_2&quot;      &quot;bear_low&quot;        &quot;bull_high&quot;       &quot;prior_bear_low&quot; 
