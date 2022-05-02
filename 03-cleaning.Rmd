@@ -42,7 +42,10 @@ head(SP500_sector)
 
 ### Rename column names
 
-First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns. For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. And same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors. 
+First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns:
+
+- For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. 
+- Same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors. 
 
 ```{r}
 colnames(SP500) <- c("Date","P_SP500","V_SP500","R_SP500")
