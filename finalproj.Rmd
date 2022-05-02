@@ -1,0 +1,736 @@
+--- 
+title: "USStock Market"
+author: "Weilin Zhou & Xiaoyuan Ge"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+# Introduction
+
+In the financial market, people(including individual and institutional investors) make money more easily under the bull market than in the bear market due to more companies raising their prices under the bull market environment. Following the flow of the market would always benefit investors. However, there are too many public companies in the stock market and how would we know if the market is going well or bad? Here, some indexes representing the market are good tools to provide insights for investors to tell them about the performance overall. S&P 500(Standard and Poor’s 500) is always one of the indexes that people use. 
+
+
+By having a general knowledge of what is S&P 500, here is the official explanation of it: the S&P 500 Index features 500 leading U.S. publicly traded companies, with a primary emphasis on market capitalization. And it is not an exact list of the top 500 U.S. companies by market cap because there are other criteria that the index includes. And usually people, whether doing investment or doing business, would refer to the index of the whole market to make investment decisions. Therefore the S&P 500 index is a diversified basket of an entire market including each different sector in the market with the highest 500 market cap. Since there are different companies including different sectors in the SP500, we are curious on how each sector interacts with the whole financial market. And how they affect the whole market.	
+
+
+This topic especially interested for both of the two of us is because we are financial-related backgrounds and in the daily life, we invest money in the stock market therefore the questions that interested us also would facilitate us with our daily investing and learn in depth would give us a more general overview.
+
+<!--chapter:end:index.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Data sources
+
+Weilin is responsible for collecting the data. First of all, we discussed that the data could be directly fetched from yahoo finance but it seems hard to use the numbers straightforwardly . And, Weilin found that there are datasets that could be directly downloaded from Data Hub and Bloomberg. 
+
+First of all, we collected the data information about S&P 500 from the “Data Hub”, finding the companies within the S&P 500 selection included and what sectors they belong to(Among all 11 different sectors).The name of the data set is called “constituents_financials ” . In more detail, the data set included the information about their names, short-cuts, sectors,prices, EPS, dividend yield, 52 week low and high, market cap, EBITDA and etc. In total, there are 14 different variables inside, and some of them are numbers and some are strings. When going deeper into the dataset, the data of S&P500 Companies with financial information in total have 505 rows which represent there are 505 companies inside the calculation of index S&P 500. 
+
+Secondly, we pulled in the data from Bloomberg on the price every 2 weeks of stocks from each 11 sectors and also the index price change of S&P 500. After obtaining the data, we add-in one column to calculate the returns. Calculating returns could better help us conduct more research later thus this step is necessary. The type of variables in the “USStock market data” including date, price, volume and one add-in : returns. Price, Volume and Returns are all numbers and date is the only string variable. 
+
+There are no problems that we observe from USStock market data. But we indeed found that there are some missing values in SP500 constituent data. There are 10 data points missing from the ‘Real Estate’ Sector. Besides this, there are no irregularities and extreme outliers observed in the data set that we use. I think one reason behind this would be because the website we fetched the data from, they have already done some data processing. And another reason I regard is because the unit of financial data metrics that we use is weeks, in comparison to second to second, or minute to minute, it is easier to record. 
+
+
+Here are links for our data sources:
+
+1) Database: Bloomberg
+
+Use School's Bloomberg terminal to download market data of differenct stocks and sector index. 
+
+
+2) SP500 Constitutents:
+
+https://datahub.io/core/s-and-p-500-companies-financials#resource-constituents-financials
+
+
+
+https://www.spglobal.com/spdji/en/indices/equity/sp-500/#overview
+
+<!--chapter:end:02-data.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Data transformation
+
+## Import Data
+
+1) SP500 & Sector Index
+
+```{r}
+library(tidyverse)
+data_path <- "C:/Users/weili/Desktop/G5293/Final Project/Final_Project.xlsx"
+readxl::excel_sheets(path = data_path)
+
+SP500 <- readxl::read_excel(path=data_path,sheet=1)
+Energy <- readxl::read_excel(path=data_path,sheet=2)
+Info_tech <- readxl::read_excel(path=data_path,sheet=3)
+Fin <-readxl::read_excel(path=data_path,sheet=4)
+Health_care <- readxl::read_excel(path=data_path,sheet=5)
+Consumer_D <- readxl::read_excel(path=data_path,sheet=6)
+Utility <- readxl::read_excel(path=data_path,sheet=7)
+Consumer_S <- readxl::read_excel(path=data_path,sheet=8)
+Industrials <- readxl::read_excel(path=data_path,sheet=9)
+Commu_Services <- readxl::read_excel(path=data_path,sheet=10)
+Materials <- readxl::read_excel(path=data_path,sheet=11)
+Real_Estate <- readxl::read_excel(path=data_path,sheet=12)
+```
+
+Pick a dataset to take a brief look at:
+
+```{r}
+head(SP500)
+```
+
+2) S&P500 Constituents Financials:
+
+```{r}
+SP500_comp <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/constituents_financials.csv")
+SP500_sector <- readxl::read_xlsx("C:/Users/weili/Desktop/G5293/Final Project/500-sector-representation.xlsx",skip=3)
+head(SP500_comp)
+head(SP500_sector)
+```
+
+## Data Transformation:
+
+### Rename column names
+
+First of all, some names of the columns in the data set are not easy for people to read or understand. Therefore, we change some of the names of the columns:
+
+- For each 11 sectors, we name them by their sector name first and then form the data frame by using “P_name of sector”(ie.P_SP500,P_CommuSer….) instead of “PX_LAST” as shown in the original data set. 
+- Same for the volume columns, we change the name of “PX_VOLUME” into “V_name of sector” for 11 different sectors. 
+
+```{r}
+colnames(SP500) <- c("Date","P_SP500","V_SP500","R_SP500")
+colnames(Commu_Services) <- c("Date","P_CommuSer","V_CommuSer","R_CommuSer")
+colnames(Consumer_D) <- c("Date","P_ConsumerD","V_ConsumerD","R_ConsumerD")
+colnames(Consumer_S) <- c("Date","P_ConsumerS","V_ConsumerS","R_ConsumerS")
+colnames(Energy) <- c("Date","P_Energy","V_Energy","R_Energy")
+colnames(Fin) <- c("Date","P_Fin","V_Fin","R_Fin")
+colnames(Health_care) <- c("Date","P_Health","V_Health","R_Health")
+colnames(Industrials) <- c("Date","P_Industrial","V_Industrial","R_Industrial")
+colnames(Info_tech) <- c("Date","P_Infotech","V_Infotech","R_Infotech")
+colnames(Materials) <- c("Date","P_Materials","V_Materials","R_Materials")
+colnames(Real_Estate) <- c("Date","P_RealEstate","V_RealEstate","R_RealEstate")
+colnames(Utility) <- c("Date","P_Utility","V_Utility","R_Utility")
+```
+
+
+```{r}
+SP500_sector <- SP500_sector%>%
+  dplyr::rename("Sector"="MARKET REPRESENTATION",
+         "election_1"="election...6",
+         "election_2"="election...9")%>%
+  head(-2)
+colnames(SP500_sector) <- gsub(" ","_",colnames(SP500_sector))
+SP500_sector <- SP500_sector[SP500_sector$Sector !="S&P 500",]
+colnames(SP500_comp) <- gsub("[.]","_",colnames(SP500_comp))
+
+print(colnames(SP500_sector))
+
+print(colnames(SP500_comp))
+```
+
+
+###  Merge into one dataset 
+
+```{r}
+USStock <- SP500%>%
+  left_join(Commu_Services,by="Date")%>%
+  left_join(Consumer_D,by="Date")%>%
+  left_join(Consumer_S,by="Date")%>%
+  left_join(Energy,by="Date")%>%
+  left_join(Fin,by="Date")%>%
+  left_join(Health_care,by="Date")%>%
+  left_join(Industrials,by="Date")%>%
+  left_join(Info_tech,by="Date")%>%
+  left_join(Materials,by="Date")%>%
+  left_join(Real_Estate,by="Date")%>%
+  left_join(Utility,by="Date")
+head(USStock)
+```
+
+
+### Seperate Price and Volume Data
+
+```{r}
+USStock_Price <- USStock%>%
+  select(Date,starts_with("P_"))
+USStock_Volume <- USStock%>%
+  select(Date,starts_with("V_"))
+USStock_Return <- USStock%>%
+  select(Date,starts_with("R_"))
+
+head(USStock_Price)
+
+head(USStock_Volume)
+
+head(USStock_Return)
+```
+
+
+Moreover, we have one small add-ons of the data. Although it is not data transformation on the original ones that we directly get from the website. We indeed make some changes. We add one more column for calculating the returns by using the formula: (Pi/P1/6/17)-1 where i is the date price.
+
+
+```{r}
+APPLE <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/AAPL.csv")
+Google <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/GOOG.csv")
+MSFT <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/MSFT.csv")
+Facebook <- read.csv("C:/Users/weili/Desktop/G5293/Final Project/FB.csv")
+head(APPLE)
+
+APPLE <- APPLE%>%
+  select(Date,Close)%>%
+  dplyr::rename(APPLE_close=Close)%>%
+  mutate(Apple_return = c(-diff(APPLE$Close)/APPLE$Close[-1]*100,NA))
+head(APPLE)
+
+Google <- Google%>%
+  select(Date,Close)%>%
+  mutate(Google_return = c(-diff(Google$Close)/Google$Close[-1] *  100, NA))
+colnames(Google) <- c("Date","Google_close","Google_return")
+
+
+MSFT <- MSFT%>%
+  select(Date,Close)%>%
+  mutate(MSFT_return = c(-diff(MSFT$Close)/MSFT$Close[-1] *  100, NA))
+colnames(MSFT) <- c("Date","MSFT_close","MSFT_return")
+
+Facebook <- Facebook%>%
+  select(Date,Close)%>%
+  mutate(FB_return = c(-diff(Facebook$Close)/Facebook$Close[-1] *  100, NA)) 
+colnames(Facebook) <- c("Date","FB_close","FB_return")
+
+
+```
+
+
+Other than what I mentioned above, that’s all the changes we made on the original data. There are no further transformations on the data. 
+
+
+<!--chapter:end:03-cleaning.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Missing values
+
+
+## US Stock
+
+```{r}
+library(mi)
+
+sum(is.na.data.frame(USStock))
+
+stock_df <- as.data.frame(USStock)%>%
+  select(-Date)
+x1 <- missing_data.frame(stock_df)
+
+image(x1)
+```
+
+The first graph shows the missing data in the “Final_Project” dataset that tells the whole performance of the US Stock market. As we could see that there are no missing values shown in this data set. Therefore, there is no further processing that we need to make. 
+
+## SP500 Constitutent
+
+```{r}
+sum(is.na.data.frame(SP500_comp))
+
+colSums(is.na(SP500_comp))
+
+SP500_comp_df <- as.data.frame(SP500_comp)
+x2 <- missing_data.frame(SP500_comp_df)
+
+image(x2)
+```
+
+The second graph shows the information on the missing value of the data set “constituents_financials ”. There are 10 values missing in it. Specifically, there are 2 values missing from Price_Earnings, and there are 8 values missing from Price_Book.
+
+
+```{r,fig.width=10}
+library(tibble)
+sum(is.na.data.frame(SP500_sector))
+
+colSums(is.na(SP500_sector))
+
+SP500_sector2 <- data.frame(column_to_rownames(SP500_sector,var="Sector"))
+row.names(SP500_sector2)
+
+tidysector <- SP500_sector2 %>% 
+    rownames_to_column(var = "id")%>%
+    gather(key, value, -id) %>% 
+    mutate(missing = ifelse(is.na(value), "yes", "no"))
+head(tidysector)
+
+ggplot(tidysector, aes(x = key, y = fct_rev(id), fill = missing)) +
+  geom_tile(color = "white") 
+```
+
+The third graph shows the information on “500-sector-representation”.  We could directly see from the graph that the green ones represent the missing values from that part. Therefore, all missing values are within the “Real Estate” sector. There are 12 in total missing values.  Specifically, the values “bear_low”, “bull_high”,”prior_bear_low”, “prior_bull_high” and the year 1989, 1999,2009, 2011,2012,2013,2014 and 2015’s values are missing as well. There are no values missing from other sectors and other columns. 
+
+<!--chapter:end:04-missing.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Results
+
+## US Whole Stock Market
+
+Start to explore
+
+5-year weekly return :
+
+```{r}
+library(tidyverse)
+library(viridis)
+library(plotly)
+library(ggalluvial)
+library(scales)
+library(parcoords)
+Return_df <- pivot_longer(USStock_Return,!Date,
+                         names_to = "Sector",
+                         values_to = "Return")%>%
+  group_by(Sector)
+
+g1 <- ggplot(Return_df,aes(x=Date,y=Return,color=Sector))+
+  geom_line()+
+  labs(title = "US Stock Market Performance in the past 5 years",
+       y="Return(%)")+
+  theme_grey(12)+
+  theme(legend.title = element_blank())
+g1
+```
+
+For the past 5 years, Most sectors have positive returns except the Energy Sector. Compared to the past early years, the Energy Sector has had a huge impact since 2020. The reason behind might account from the Covid-19 explosion. And we could have a direct observation vertically of year 2020, almost all sectors slumped on their returns, However, Information Technology and Consumer Discretionary Sector recover their returns shortly and show an increase trend until 2022. From the overall perspective, it is absolutely true that Information Technology has more returns and gains compared to the others. The differences on returns is nearly more than 1% of Information Technology compared to the second most sector Consumer Discretionary. Therefore, we could say that Information Technology indeed has better performance whether from horizontal or vertical span. Until 2022, the return of the Energy Sector still is negative. Therefore, if investors want to make profit in the short-term, the Energy Sector might not be a good choice. 
+
+
+```{r}
+g2 <- ggplot(Return_df,aes(Return))+
+  geom_histogram(color = "blue", fill = "lightblue")+
+  facet_wrap(~Sector,scales = "free_x")+
+  labs(title="Histogram of Sector Index Performance",
+       x="Return",
+       y="Frequency")
+g2
+```
+
+From this histogram, most sectors are right-skewed, which is rational to understand. On the right side of the graph, the frequencies of observations are lower than the frequencies of observations to the left side. This indicates that most of the time, you could earn a small amount of profit, but the probability of earning high returns is low relative to all industries. It’s obvious in the Consumer Staples and Consumer Discretionary sector. The distribution of return in the Industrial sector is a relatively normal distribution. This tells us in most cases you could earn a relatively good percentage of returns. But, the probability of earning extremely high returns and extremely low returns is also in a low number. The histogram of Energy returns is opposite from the others–it is left skewed. But when we have a close look at the scale, the starting point of x-axis is negative. The high frequency range is inside -0.25 to 0 returns. Therefore we could conclude that the returns of the Energy sector still mostly focus on the negatives. It matches with what we mentioned above, the Energy Sector might not be a good industry to invest in. 
+
+
+
+
+
+```{r}
+g3 <- ggplot(Return_df,aes(Return,Sector))+
+  geom_boxplot()+
+  labs(title="Biplot of Sector Index Performance",
+       x="Return (%)")+
+  theme_grey(12)
+g3
+```
+
+
+The boxplot gives us the direct observation on the median of returns and the outliers. Information Technology all have positive returns which means if you invest in this sector, in 5 years, your returns must be positive. And the Information Technology Sector has large outliers. Although the percentage of returns concentrated in 0.5%-1.5%,  investors also have opportunities to earn returns more than 2%. The return of SP500 index, Information Technology, Health and Consumer Discretionary have no negative returns overall which might give investors some insights on investing in those industries. Utility, Real Estate, Materials and Industrial sectors have the smallest IQR rather than other sectors. And again, the Energy Sector is the one that has the least good return performance. Most of the time, the range of returns under positive percentage.
+
+
+```{r}
+library(ggridges)
+g4 <- ggplot(Return_df,aes(x=Return,y=reorder(Sector,-Return,median)))+
+  geom_density_ridges(fill="blue",alpha=0.5)+
+  labs(title="cleveland dot plots of Sector Index Performance",
+       y="Sector",
+       x="Return (%)")
+g4
+```
+
+Info-tech perform best. 
+
+
+## SP500 Constitutent
+
+```{r}
+library(treemap)
+head(SP500_sector)
+
+#Treemap of 2021 Sector Composition
+treemap(SP500_sector,index="Sector",vSize="2021",title = "SP500 Constituent in 2021")
+```
+
+In the consistent SP500 index, all 11 sectors are included but with different weights. The larger the area of the rectangular, the higher the percentage takes place in the constituent inside SP500. Information Technology takes the highest proportion inside SP500. The second highest percentage take place sector is Consumer Discretionary. Energy and Materials takes almost the same percentage. And Real Estate and Utilities almost take the same proportion. It’s hard to identify which sector has the least percentage in SP500 among Energy, Materials, Real Estate and Utilities from this graph. 
+
+
+```{r}
+SP500_sector_year <- SP500_sector%>%
+  select(c("Sector","1989","1999","2009","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021"))
+#%>%
+ # mutate(Sector=c("EN","M","I","CD","CS","HC","F","IT","CoS","U","RE"))
+
+#SP500_sector_year[,names(SP500_sector_year)!="Sector"]<- sapply(SP500_sector_year[,names(SP500_sector_year)!="Sector"],function(x) percent(x, accuracy=1))
+
+
+#gg_SP500_sector_year <- SP500_sector_year%>%
+#  to_lodes_form(axes=2:15)
+
+#al_plot <- ggplot(gg_SP500_sector_year,aes(alluvium=Sector,x=x,stratum=stratum))+
+#  geom_flow(aes(fill=Sector),width=1/12)+
+#  geom_stratum(color="black")+
+#  geom_text(stat = "stratum",aes(label=paste(after_stat(stratum))))+
+#  scale_y_continuous(expand = c(0.01,0))+
+#  theme_classic()
+#al_plot
+```
+
+We separate the sector into 2 Categories, one is "High-weighted", which proportion is over 10%, another is "Low-weighted"
+
+Plot the interactive plot to see the change of weight in different sector. 
+
+```{r}
+SP500_sector_year2 <- SP500_sector_year%>%
+  mutate(Category = as.factor(ifelse(SP500_sector_year$`2021`<0.1,"Low-weighted","High-weighted")))
+head(SP500_sector_year2)
+
+g5 <- SP500_sector_year2%>%
+  arrange(Category)%>%
+  parcoords(rownames = F,
+            brushMode ="1D-axes",
+            reorderable = T,
+            queue = T,
+            color=list(colorBy = "Category",colorScale="scaleOrdinal",colorScheme="schemeSet1"),
+            withD3 =T)
+g5
+```
+
+This graph gives us a comprehensive overview on the proportion change of each different section included in index SP500 over time. For example the most obvious one that we could read from the chart knowing that the percentage of Information Technology increased a huge from 1989 to 1999 and took the first place of components in SP500 until now. Industries Sector used to have a high percentage in SP500. In 1989 it reached the peak number of proportion but gradually declined as time went by and until now it has become one of the least component in SP500. The Materials Sector is also another sector that declines over time. What’s different from the Industrials Sector is that the Materials Sector’s percentage declined from the beginning of 1989. And the tread becomes steady from 2016 to 2021. 
+
+
+Investigate weight in different situations:
+
+```{r,echo=FALSE,fig.width = 10}
+library(vcd)
+
+SP500_sector_situation <- SP500_sector%>%
+  select(c("Sector","2021","2020","covid_low","election_1","pre-covid_hi"))%>%
+  mutate(Sector=c("EN","M","I","CD","CS","HC","F","IT","CoS","U","RE"))
+head(SP500_sector_situation)
+
+tidy_situation <- SP500_sector_situation%>%
+  gather(key="Group",value="Freq",-Sector)
+head(tidy_situation)
+tidy_situation$Group <- fct_rev(tidy_situation$Group)
+
+mosaic(Group~Sector, direction=c("h","v"),tidy_situation,
+       highlighting_fill = c("grey80","cornflowerblue","lightblue","darkseagreen2","lightpink"))
+
+```
+
+```{r}
+g6 <- ggplot(tidy_situation,aes(x=Group,y=Freq,fill=Sector))+
+  geom_bar(position = "fill",stat="identity")+
+  theme_minimal()+
+  scale_fill_manual('position',values = c('coral2', 'steelblue', 'pink',"grey80","cornflowerblue","lightblue","darkseagreen2","lightpink","hotpink","lightsteelblue","plum2"))+
+  labs(title="Sector Composition Change in different periods",
+       x="Period",
+       y="Proportion")
+
+g6
+```
+
+
+## PE-ratio Selection
+
+The price-to-earnings ratio is one of the most widely used metrics for investors and analysts to determine tock valuation. 
+
+In short, the P/E shows what the market is willing to pay today for a stock based on its past or future earnings. 
+
+A higher P/E ratio shows that investors are willing to pay a higher sshare price today because of growth expectations in the future. The average P/E for the S&P 500 has historically ranged from 13 to 15. 
+
+```{r}
+PE_analysis <- SP500_comp_df%>%
+  select(Name,Sector,Price,Earnings_Share,Price_Earnings)
+head(PE_analysis)
+```
+```{r}
+g7 <- ggplot(PE_analysis,aes(x=Earnings_Share,y=Price))+
+  geom_point()+
+  labs(title="First Glance of SP500 company P/E Ratio",
+       x="Earnings per share",
+       y="Price")
+g7
+```
+
+The first glance of SP500 company P/E ratio shows us that most company's EPS concentration is around 0-10 corresponding to the price lower than 250. There are some obvious outliers in the chart. One is high earnings per share but with corresponding higher price. However, the one with higher earnings per share but lower Price might be the good one for investors to invest because these kinds of companies have higher cost-effectiveness. Companies with median earnings per share but high prices are those we need to avoid to invest in. We could see directly that inside the component of SP500, there are not many low cost-effectiveness stocks  but happily included some high cost-effectiveness companies to invest in. Therefore, we could conclude that investing in SP500 is a good choice and the stock choice inside SP500 is rational. 
+
+```{r}
+PE_analysis_improved <- PE_analysis%>%
+  filter(Earnings_Share>0&Price<400)%>%
+  filter(Earnings_Share<20)%>%
+  filter(Price_Earnings>0 & Price_Earnings<50)
+```
+
+
+```{r}
+g8 <- plot_ly(PE_analysis_improved,x=~Earnings_Share,y=~Price,color=~Sector,text=~Name,
+              market = list(size=7))%>%
+  layout(title="",
+         xaxis = list(title="Earnings per Share"),
+         yaxis = list(title="Price"))
+g8
+```
+
+The interactive plot of this plot that focuses on IT, Health Care, Consumer Discretionary and Financials provides us with more detailed information of each company.  Sherwin-Williams is a company from Materials Sector, it has the largest EPS but also with highest price. There are two companies from Industrials with higher EPS but relative lower price, these are the companies that are worth us to invest in. You could check out each EPS or Price range that you are interested in and to find out what companies are best fit for you to invest to meet your expectations by using this interactive plot. 
+
+Focus on IT/Health Care/Consumer Discretionary/Financials
+```{r}
+head(USStock_Return)
+
+Relative_Return <- USStock_Return%>%
+  select(Date,R_SP500,R_Infotech,R_Health,R_ConsumerD,R_Fin)%>%
+  mutate(RR_IT = R_Infotech/R_SP500,
+         RR_Health = R_Health/R_SP500,
+         RR_ConsumerD = R_ConsumerD/R_SP500,
+         RR_Fin = R_Fin/R_SP500)%>%
+  drop_na()
+```
+
+
+
+
+```{r}
+example2 <- Relative_Return%>%
+  select(Date,R_SP500,R_Infotech,R_Health,R_ConsumerD,R_Fin)%>%
+  pivot_longer(cols=c("R_Infotech","R_Health","R_ConsumerD","R_Fin"),names_to = "Type",values_to = "Return")%>%
+  mutate(Relative_Return = Return/R_SP500)
+#  mutate(Evaluation = as.factor(ifelse(example2$Relative_Return<1,"Not Recommend",
+#                                         ifelse(example2$Relative_Return>=1 & #example2$Relative_Return<=2,"Recommend","Highly Recommend"))))
+
+head(example2)
+g9 <- ggplot(example2,aes(x=R_SP500,y=Return,color=Type))+
+  geom_point()+
+  geom_abline(slope=2,intercept = 0,linetype=4)+
+  geom_abline(slope=1,intercept = 0,linetype=4)+
+  geom_abline(slope=1/2,intercept = 0,linetype=4)+
+  theme_minimal()+
+  labs(title = "",
+       x="Return of SP500 Index",
+       y="Return of Sector Index")
+g9
+```
+
+Since IT, Health Care, Consumer Discretionary and Financials take most porpotation in the constitution of SP500. Therefore we want to say which industry has higher returns compared to the market(SP500). Information Technology with purple definitely represents higher returns than the market and almost all the companies within this industry have higher returns, therefore investing in this sector would be a good choice. However, we say that higher returns sometimes also represent higher risks, information technology might not be a good choice for a moderate investor. The red dots represent the Consumer Discretionary Sector. In this area, the return of the market is similar to the sector; this means if the market goes well then in general, the returns on the Consumer Discretionary Sector would also be relatively good. And there is not much risk which is suitable for most moderate investors. This is also one sector that we recommend the most to invest in. Health and Financials sector’s returns are relatively lower than the market although some of them are in the area with Consumer Discretionary Sector which is recommended. However, from a board perspective, most of the companies in Health and Financials cannot receive higher returns in the long-run compared to the whole market. Some companies even have negative returns. 
+
+## IT Industry Specific Analysis
+
+Pick up IT Companies
+
+```{r}
+IT_company <- SP500_comp_df%>%
+  filter(Sector=="Information Technology")%>%
+  arrange(desc(Market_Cap))
+#Company correlation
+head(SP500_comp_df)
+head(IT_company,11)
+```
+
+The top4 Companies are Apple/GooGle/MSFT/FB, we have imported the needed data in the previous section.
+
+```{r}
+IT_top4_company <- APPLE%>%
+  left_join(Google,by="Date")%>%
+  left_join(MSFT,by="Date")%>%
+  left_join(Facebook,by="Date")
+IT_top4_company_return <- IT_top4_company%>%
+  select(Date,ends_with("_return"))%>%
+  drop_na() #Drop the last row which has no return 
+```
+
+
+```{r}
+panel.hist <- function(x, ...) {
+    usr <- par("usr")
+    on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5))
+    his <- hist(x, plot = FALSE,breaks=20)
+    breaks <- his$breaks
+    nB <- length(breaks)
+    y <- his$counts
+    y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = rgb(0, 1, 1, alpha = 0.5), ...)
+    # lines(density(x), col = 2, lwd = 2) # Uncomment to add density lines
+}
+pairs(~Apple_return+Google_return+MSFT_return+FB_return,
+      data=IT_top4_company_return,
+      labels=c("Apple","Google","Microsoft","Facebook"),
+      main="Correlation matrix of Top 4 Tech Stocks",
+      diag.panel = panel.hist)
+```
+
+
+
+```{r}
+library(reshape)
+cor_IT <- round(cor(IT_top4_company_return[,2:5]),2)
+head(cor_IT)
+
+melted_cor_IT <- melt(cor_IT)
+g10 <- ggplot(data=melted_cor_IT,aes(x=X1,y=X2,fill=value))+
+  geom_tile()+
+  geom_text(aes(X1,X2,label=value),
+            color="white",size=6)
+
+g10
+```
+
+<!--chapter:end:05-results.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Interactive component
+
+
+```{r}
+library(pacman)
+
+pacman::p_load(plotly,quantmod)
+
+APPLE_stock <- getSymbols("AAPL",auto.assign = F)
+date <- index(APPLE_stock)
+
+APPLE_df <- data.frame(APPLE_stock,row.names=NULL)
+APPLE_df$Date <- date
+colnames(APPLE_df) <- c("Open", "High", "Low", "Close", "Volume", "Adjusted", "Date")
+
+APPLE_df <- APPLE_df%>%
+  filter(Date>"2017-01-01")
+
+head(APPLE_df)
+```
+
+
+
+We are interested in stock performance after Jan 2017
+
+```{r}
+barcols <- c()
+
+for(i in 1:length(APPLE_df$Date)){
+  if(i==1){
+    barcols[i] <- "#F95959"
+  }
+  if(i>1){
+    x <- ifelse(APPLE_df$Close[i] > APPLE_df$Close[i-1],"#455D7A", "#F95959")
+    barcols[i] <- x
+  }
+}
+
+Moving_average <- runMean(APPLE_df$Close)
+
+rangeselectorlist = list(
+  x = 0, y = 0.9,
+  bgcolor = "#0099cc",
+  font = list(color = "white"),
+  
+  buttons = list(
+    list(count = 1, label = "reset", step = "all"),
+    list(count = 1, label = "1yr", step = "year", stepmode = "backward"),
+    list(count = 3, label = "3 mo", step = "month", stepmode = "backward"),
+    list(count = 1, label = "1 mo", step = "month", stepmode = "backward"),
+    list(step = "all")
+  )
+)
+
+plot_ly(APPLE_df, type = "candlestick",
+        x = ~Date,
+        open = ~Open, high = ~High, low = ~Low, close = ~Close,
+        yaxis = "y",
+        increasing = list(line = list(color = "#455D7A")),
+        decreasing = list(line = list(color = "#F95959")),
+        name = "Price",
+        height = 600, width = 1024) %>%
+  
+  add_bars(data = APPLE_df, x = ~Date, y = ~Volume,
+           marker = list(color = barcols),
+           yaxis = "y2", inherit = F, name = "Vol") %>%
+  
+  add_lines(x = APPLE_df$Date, y = Moving_average,
+            line = list(width = 3, dash = "5px", color = "#33bbff"),
+            inherit = F, name = "Mov Avg") %>%
+  
+  layout(
+    plot_bgcolor = "rgb(250,250,250)",
+    xaxis = list(title = "", domain = c(0,0.95),
+                 
+                 rangeslider = list(visible = F),
+                 
+                 rangeselector = rangeselectorlist),
+    yaxis = list(domain = c(0.22, 0.9)),
+    yaxis2 = list(domain = c(0, 0.18), side = "right"),
+    
+    showlegend = F,
+    
+    annotations = list(
+      list(x = 0, y = 1, xanchor = "left", yanchor = "top",
+           xref = "paper", yref = "paper",
+           text = paste0("<b>APPLE</b>"),
+           font = list(size = 30, family = "serif"),
+           showarrow = FALSE),
+      
+      list(x = 0.8, y = 0.95, xanchor = "left", yanchor = "top",
+           xref = "paper", yref = "paper",
+           text = paste0("[", paste(range(APPLE_df$Date),collapse = " / "), "]"),
+           font = list(size = 15, family = "serif"),
+           showarrow = FALSE),
+      
+      list(x = 0, y = 0.18, xanchor = "left", yanchor = "top",
+           xref = "paper", yref = "paper",
+           text = paste0("<b>Volume</b>"),
+           font = list(size = 15, family = "serif"),
+           showarrow = FALSE)
+    )
+  )
+
+```
+
+<!--chapter:end:06-interactive.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Conclusion
+
+
+<!--chapter:end:07-conclusion.Rmd-->
+
