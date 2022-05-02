@@ -6,7 +6,7 @@ library(pacman)
 
 pacman::p_load(plotly,quantmod)
 
-APPLE_stock <- getSymbols("AAPL",auto.assign = F)
+APPLE_stock <- getSymbols("AAPL",auto.assign = T)
 date <- index(APPLE_stock)
 
 APPLE_df <- data.frame(APPLE_stock,row.names=NULL)

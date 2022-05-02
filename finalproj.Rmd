@@ -342,9 +342,6 @@ g2
 From this histogram, most sectors are right-skewed, which is rational to understand. On the right side of the graph, the frequencies of observations are lower than the frequencies of observations to the left side. This indicates that most of the time, you could earn a small amount of profit, but the probability of earning high returns is low relative to all industries. It’s obvious in the Consumer Staples and Consumer Discretionary sector. The distribution of return in the Industrial sector is a relatively normal distribution. This tells us in most cases you could earn a relatively good percentage of returns. But, the probability of earning extremely high returns and extremely low returns is also in a low number. The histogram of Energy returns is opposite from the others–it is left skewed. But when we have a close look at the scale, the starting point of x-axis is negative. The high frequency range is inside -0.25 to 0 returns. Therefore we could conclude that the returns of the Energy sector still mostly focus on the negatives. It matches with what we mentioned above, the Energy Sector might not be a good industry to invest in. 
 
 
-
-
-
 ```{r}
 g3 <- ggplot(Return_df,aes(Return,Sector))+
   geom_boxplot()+
@@ -353,7 +350,6 @@ g3 <- ggplot(Return_df,aes(Return,Sector))+
   theme_grey(12)
 g3
 ```
-
 
 The boxplot gives us the direct observation on the median of returns and the outliers. Information Technology all have positive returns which means if you invest in this sector, in 5 years, your returns must be positive. And the Information Technology Sector has large outliers. Although the percentage of returns concentrated in 0.5%-1.5%,  investors also have opportunities to earn returns more than 2%. The return of SP500 index, Information Technology, Health and Consumer Discretionary have no negative returns overall which might give investors some insights on investing in those industries. Utility, Real Estate, Materials and Industrial sectors have the smallest IQR rather than other sectors. And again, the Energy Sector is the one that has the least good return performance. Most of the time, the range of returns under positive percentage.
 
