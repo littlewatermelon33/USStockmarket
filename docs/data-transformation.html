@@ -266,6 +266,20 @@
 ## # ... with 6 more variables: R_Health &lt;dbl&gt;, R_Industrial &lt;dbl&gt;,
 ## #   R_Infotech &lt;dbl&gt;, R_Materials &lt;dbl&gt;, R_RealEstate &lt;dbl&gt;, R_Utility &lt;dbl&gt;</code></pre>
 <p>Moreover, we have one small add-ons of the data. Although it is not data transformation on the original ones that we directly get from the website. We indeed make some changes. We add one more column for calculating the returns by using the formula: (Pi/P1/6/17)-1 where i is the date price.</p>
+<pre><code>##         Date   Open   High    Low  Close Adj.Close    Volume
+## 1 27/12/2021 177.09 181.33 177.07 178.20  177.9733 276185800
+## 2 20/12/2021 168.28 176.85 167.46 176.28  176.0557 359176900
+## 3 13/12/2021 181.12 182.13 169.69 171.14  170.9222 769299200
+## 4 06/12/2021 164.29 179.63 164.28 179.45  179.2217 569227700
+## 5 29/11/2021 159.37 170.30 157.80 161.84  161.6341 669611100
+## 6 22/11/2021 161.68 165.70 156.36 156.81  156.6105 359933200</code></pre>
+<pre><code>##         Date APPLE_close Apple_return
+## 1 27/12/2021      178.20     1.089175
+## 2 20/12/2021      176.28     3.003389
+## 3 13/12/2021      171.14    -4.630815
+## 4 06/12/2021      179.45    10.881118
+## 5 29/11/2021      161.84     3.207702
+## 6 22/11/2021      156.81    -2.329495</code></pre>
 <p>Other than what I mentioned above, that’s all the changes we made on the original data. There are no further transformations on the data.</p>
 
 </div>
