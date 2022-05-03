@@ -103,3 +103,7 @@ plot_ly(APPLE_df, type = "candlestick",
   )
 
 ```
+
+Based on this interactive plot, the audience can see the change of moving average price and volumes traded for each day after 2017 clearly. Also, the audience can change the time period (1year/3month/1month/all) depending on their needs by clicking the button below the company name.
+
+
