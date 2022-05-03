@@ -285,6 +285,7 @@ pairs(~Apple_return+Google_return+MSFT_return+FB_return,
       diag.panel = panel.hist)
 ```
 
+From the Correlation matrix, we firstly are able to observe that the returns of all stocks nearly follow normal distribution. And Apple has a strong positive correlation with Google and Microsoft. Apple has a positive correlation with Facebook too but the relationship is less intense compared to the other 2 companies. The return of Microsoft has an obvious positive slope with Facebook which represents the trend of these two companies moving together. It’s not hard to understand since these 4 stocks are under one same sector. And in the stock market, the passionate and investment insight towards one specific industry would cause the change of return within this sector. When there are more capital flows into this industry, there is a high probability the stocks belonging to this sector will increase and vice versa. Also, these 4 companies are top 4 inside the Technology Industry, investors would prefer big companies and therefore the correlation between those stocks would have a strong connection. 
 
 
 ```{r}
@@ -300,3 +301,8 @@ g10 <- ggplot(data=melted_cor_IT,aes(x=X1,y=X2,fill=value))+
 
 g10
 ```
+
+
+
+
+This graph further shows that what we mentioned above directly provides us specific numbers of correlation. And again, Microsoft has the strongest correlation(0.7) with Apple.  Within the IT industry of those 4 biggest companies, the least correlation is between Microsoft and Facebook which is only 0.52. Therefore, if you are an investor that specifically has a long position in the Technology industry, investing in Microsoft and Facebook separately would help you to manage risk by diversifying returns. And investing Microsoft together with Apple in the market would have a “leverage” result to help you gain more since the relationship of these two are strongly positive. But when one company's returns decrease, another one has a high probability to decrease as well. At that time, the loss would also be doubled. 
