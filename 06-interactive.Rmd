@@ -1,5 +1,6 @@
 # Interactive component
 
+We create an interactive plot to visualized past performance of stock.
 
 ```{r}
 library(pacman)
@@ -18,7 +19,6 @@ APPLE_df <- APPLE_df%>%
 
 head(APPLE_df)
 ```
-
 
 
 We are interested in stock performance after Jan 2017
