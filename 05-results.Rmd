@@ -60,7 +60,7 @@ g4 <- ggplot(Return_df,aes(x=Return,y=reorder(Sector,-Return,median)))+
   geom_density_ridges(fill="blue",alpha=0.5)+
   labs(title="Ridgeline plot of Sector Index Performance",
        y="Sector",
-       x="Return (%)")
+       x="Return(%)")
 g4
 ```
 
