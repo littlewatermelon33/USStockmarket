@@ -58,7 +58,7 @@ The boxplot gives us the direct observation on the median of returns and the out
 library(ggridges)
 g4 <- ggplot(Return_df,aes(x=Return,y=reorder(Sector,-Return,median)))+
   geom_density_ridges(fill="blue",alpha=0.5)+
-  labs(title="cleveland dot plots of Sector Index Performance",
+  labs(title="Ridgeline plots of Sector Index Performance",
        y="Sector",
        x="Return (%)")
 g4
